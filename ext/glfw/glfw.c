@@ -43,11 +43,11 @@ static VALUE glfw_Set##_name_##Callback(VALUE obj,VALUE arg1) \
 		rb_raise(rb_eTypeError, "need Proc object as argument"); \
 \
 	if (NIL_P(arg1)) { \
-		glfwSet##_name_##Callback(NULL); \
 		_name_##_cb_ruby_func = Qnil; \
+		glfwSet##_name_##Callback(NULL); \
 	} else { \
-		glfwSet##_name_##Callback(_name_##_cb); \
 		_name_##_cb_ruby_func = arg1; \
+		glfwSet##_name_##Callback(_name_##_cb); \
 	} \
 \
 	return Qnil; \
