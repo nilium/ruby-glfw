@@ -327,37 +327,6 @@ BATCH_PARTICLES = 70 # Number of particles to draw in each batch
 PARTICLE_VERTS = 4   # Number of vertices per particle
 
 def DrawParticles(t,dt)
-	quad_lower_left = Vec.new
-	quad_lower_right = Vec.new
-
-	# Here comes the real trick with flat single primitive objects (s.c.
-	# "billboards"): We must rotate the textured primitive so that it
-	# always faces the viewer (is coplanar with the view-plane).
-	# We:
-	#   1) Create the primitive around origo (0,0,0)
-	#   2) Rotate it so that it is coplanar with the view plane
-	#   3) Translate it according to the particle position
-	# Note that 1) and 2) is the same for all particles (done only once).
-	
-	# Get modelview matrix. We will only use the upper left 3x3 part of
-	# the matrix, which represents the rotation.
-	mat = glGetFloatv( GL_MODELVIEW_MATRIX )
-	mat.flatten!
-	# 1) & 2) We do it in one swift step:
-	# Although not obvious, the following six lines represent two matrix/
-	# vector multiplications. The matrix is the inverse 3x3 rotation
-	# matrix (i.e. the transpose of the same matrix), and the two vectors
-	# represent the lower left corner of the quad, PARTICLE_SIZE/2 *
-	# (-1,-1,0), and the lower right corner, PARTICLE_SIZE/2 * (1,-1,0).
-	# The upper left/right corners of the quad is always the negative of
-	# the opposite corners (regardless of rotation).
-	quad_lower_left.x = (-PARTICLE_SIZE/2) * (mat[0] + mat[1])
-	quad_lower_left.y = (-PARTICLE_SIZE/2) * (mat[4] + mat[5])
-	quad_lower_left.z = (-PARTICLE_SIZE/2) * (mat[8] + mat[9])
-	quad_lower_right.x = (PARTICLE_SIZE/2) * (mat[0] - mat[1])
-	quad_lower_right.y = (PARTICLE_SIZE/2) * (mat[4] - mat[5])
-	quad_lower_right.z = (PARTICLE_SIZE/2) * (mat[8] - mat[9])
-	
 	# Don't update z-buffer, since all particles are transparent!
 	glDepthMask( GL_FALSE )
 	
@@ -371,66 +340,81 @@ def DrawParticles(t,dt)
 		glBindTexture( GL_TEXTURE_2D, $particle_tex_id )
 	end
 	
-	# Set up vertex arrays. We use interleaved arrays, which is easier to
-	# handle (in most situations) and it gives a linear memeory access
-	# access pattern (which may give better performance in some
-	# situations). GL_T2F_C4UB_V3F means: 2 floats for texture coords,
-	# 4 ubytes for color and 3 floats for vertex coord (in that order).
-	# Most OpenGL cards / drivers are optimized for this format.
-	
 	# Perform particle physics in this thread
 	ParticleEngine( t, dt )
 
-	vertex_array = ""
-	alpha = 0.0
+	if (Gl.is_available?(2.0)) # use point sprites if available
+		glPointParameterfv( GL_POINT_DISTANCE_ATTENUATION, [1.0,0.0,0.01] )
+		glPointParameterf( GL_POINT_FADE_THRESHOLD_SIZE, 60.0 )
+		glPointParameterf( GL_POINT_SIZE_MIN, 1.0 )
+		glPointParameterf( GL_POINT_SIZE_MAX, 1024.0 )
 	
-  particle_count = 0
-	$particles.each do |p|
-		next if !p.active
+		glTexEnvf( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE )
+	
+	
+		glEnable( GL_POINT_SPRITE)
+	
+		glPointSize( $height/14.0 )
+	
+		glBegin( GL_POINTS );
+		$particles.each do |p|
+			next if !p.active
+	
+			alpha = 4.0 * p.life
+			alpha = 1.0 if alpha > 1.0
+	
+			glColor4f(p.r,p.g,p.b,alpha)
+			glVertex3f(p.x,p.y,p.z)
+		end
+		glEnd()
+	
+		glDisable( GL_POINT_SPRITE )
+	else  
+		quad_lower_left = Vec.new
+		quad_lower_right = Vec.new
+		
+		mat = glGetFloatv( GL_MODELVIEW_MATRIX )
+		mat.flatten!
+		quad_lower_left.x = (-PARTICLE_SIZE/2) * (mat[0] + mat[1])
+		quad_lower_left.y = (-PARTICLE_SIZE/2) * (mat[4] + mat[5])
+		quad_lower_left.z = (-PARTICLE_SIZE/2) * (mat[8] + mat[9])
+		quad_lower_right.x = (PARTICLE_SIZE/2) * (mat[0] - mat[1])
+		quad_lower_right.y = (PARTICLE_SIZE/2) * (mat[4] - mat[5])
+		quad_lower_right.z = (PARTICLE_SIZE/2) * (mat[8] - mat[9])
 
-		# Calculate particle intensity (we set it to max during 75%
-    # of its life, then it fades out)
-    alpha = 4.0 * p.life
-    alpha = 1.0 if alpha > 1.0
+		glBegin(GL_QUADS)
+		$particles.each do |p|
+			next if !p.active
+			# Calculate particle intensity (we set it to max during 75%
+	    # of its life, then it fades out)
+	    alpha = 4.0 * p.life
+	    alpha = 1.0 if alpha > 1.0
+		
+			glColor4f(p.r,p.g,p.b,alpha)
+			glTexCoord2f(0.0,0.0)
+			glVertex3f(p.x + quad_lower_left.x,
+								 p.y + quad_lower_left.y,
+								 p.z + quad_lower_left.z)
 
-		rgba = [p.r*255,p.g*255,p.b*255,alpha*255].pack("CCCC")
+			glTexCoord2f(1.0,0.0)
+			glVertex3f(p.x + quad_lower_right.x,
+								 p.y + quad_lower_right.y,
+								 p.z + quad_lower_right.z)
 
-		vertex_array +=  [0.0,0.0].pack("ff") +
-									rgba +
-									[p.x + quad_lower_left.x,
-									p.y + quad_lower_left.y,
-									p.z + quad_lower_left.z].pack("fff") + 
 
-									[1.0,0.0].pack("ff") +
-									rgba +
-									[p.x + quad_lower_right.x,
-									p.y + quad_lower_right.y,
-									p.z + quad_lower_right.z].pack("fff") +
+			glTexCoord2f(1.0,1.0)
+			glVertex3f(p.x - quad_lower_left.x,
+								 p.y - quad_lower_left.y,
+								 p.z - quad_lower_left.z)
 
-									[1.0,1.0].pack("ff") +
-									rgba +
-									[p.x - quad_lower_left.x,
-									p.y - quad_lower_left.y,
-									p.z - quad_lower_left.z].pack("fff") +
-
-									[0.0,1.0].pack("ff") +
-									rgba +
-									[p.x - quad_lower_right.x,
-									p.y - quad_lower_right.y,
-									p.z - quad_lower_right.z].pack("fff")
-
-		particle_count += 1
+			glTexCoord2f(0.0,1.0)
+			glVertex3f(p.x - quad_lower_right.x,
+								 p.y - quad_lower_right.y,
+								 p.z - quad_lower_right.z)
+		end
+		glEnd()
 	end
 
-	glInterleavedArrays( GL_T2F_C4UB_V3F, 0, vertex_array )
-	glDrawArrays( GL_QUADS, 0, PARTICLE_VERTS * particle_count )
-	
-	# Disable vertex arrays (Note: glInterleavedArrays implicitly called
-	# glEnableClientState for vertex, texture coord and color arrays)
-	glDisableClientState( GL_VERTEX_ARRAY )
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY )
-	glDisableClientState( GL_COLOR_ARRAY )
-	
 	# Disable texturing and blending
 	glDisable( GL_TEXTURE_2D )
 	glDisable( GL_BLEND )
