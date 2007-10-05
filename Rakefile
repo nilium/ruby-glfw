@@ -31,7 +31,7 @@ CLEAN.include("ext/glfw/Rakefile", "ext/glfw/mkrf.log", "ext/glfw/*.so",
 setup_extension('glfw', 'glfw')
 
 case RUBY_PLATFORM
-when /(:?mswin|mingw)/
+when /(:?mswin|mingw)/ # windows
 	desc 'Does a full win32 compile'
 	task :default do
 		Dir.chdir("ext\\glfw") do
@@ -40,15 +40,25 @@ when /(:?mswin|mingw)/
 			sh "copy #{ext}.so ..\\..\\lib"
 		end
 	end
-else
+# TODO
+when /darwin/ # mac
+# TODO
+else # general posix-x11
 	desc 'Does a full compile'
-	task :default => [:glfw]
+	task :default => [:glfwlib,:glfw]
+
+	desc 'Compiles glfw library'
+	task :glfwlib do
+		Dir.chdir("glfw-src") do
+			sh "make x11"
+		end
+	end
 end
 
 task :extension => :default
 
 # Define the files that will go into the gem
-gem_files = FileList["{lib,ext}/**/*"]
+gem_files = FileList["{lib,ext,examples}/**/*"]
 gem_files = gem_files.exclude("**/*.so", "**/*.o{,bj}", "ext/glfw/*.log","ext/glfw/Rakefile")
 
 spec = Gem::Specification.new do |s|
@@ -65,6 +75,7 @@ spec = Gem::Specification.new do |s|
 	s.has_rdoc          = false
 	s.add_dependency("mkrf", ">=0.2.0")
 	s.add_dependency("rake")
+	s.add_dependency("ruby-opengl", ">=0.40")
 end
 
 # Create a task for creating a ruby gem

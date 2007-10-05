@@ -21,28 +21,39 @@ require 'rubygems'
 require 'mkrf'
 require 'rbconfig'
 
-def find_file(file, paths)
-	paths.each do |path|
-		p = path + "/" + file
-		return p if File.exist?(p)
+# parses options for compiler and linker from will-be-pkgconfig file
+# created after compiling the glfw library itself
+def parse_libglfwpcin(path)
+	libs = cflags = ""
+	f = File.open(path)
+	f.each do |line|
+		case line
+		when /Libs/
+			libs = line.chop.split("}")[1]
+		when /Cflags/
+			cflags = line.chop.split("}")[1]
+		end
 	end
-	raise "#{file} not found"
+	[cflags,libs]	
 end
 
+
 Mkrf::Generator.new( 'glfw' ) do |g|
-    case RUBY_PLATFORM
-    when /darwin/
-#        g.ldshared << ' -framework OpenGL'
-#		TODO: test on darwin/mac
-    when /mswin32/
-        g.cflags << ' -DWIN32'
-        g.include_library( 'opengl32.lib', 'glVertex3d')
-#        g.include_library( 'user32.lib', '') # is this needed ?
-#		TODO: add glfw.lib/dll dependency
-    else # unix
-				# the GLFW library is installed static-only by default, so link it statically
-				g.objects << find_file("libglfw.a",["/lib","/usr/lib","/usr/local/lib","/usr/X11R6/lib"])
-        g.cflags << ' -Wall `pkg-config --cflags libglfw`'
-				g.ldshared << ' `pkg-config --libs libglfw`'
-    end
+	case RUBY_PLATFORM
+	when /darwin/
+	#        g.ldshared << ' -framework OpenGL'
+	#		TODO: test on darwin/mac
+	when /mswin32/	
+		g.cflags << ' -DWIN32'
+		g.include_library( 'opengl32.lib', 'glVertex3d')
+		#        g.include_library( 'user32.lib', '') # is this needed ?
+		#		TODO: add glfw.lib/dll dependency
+	else # general posix-x11
+		cf,lib = parse_libglfwpcin("../../glfw-src/lib/x11/libglfw.pc.in")
+		
+		# static linking
+		g.objects << "../../glfw-src/lib/x11/libglfw.a"
+		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
+		g.ldshared << ' ' + lib
+	end
 end

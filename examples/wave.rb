@@ -14,7 +14,7 @@ require 'glfw'
 include Gl,Glu,Glfw,Math
 
 # Maximum delta T to allow for differential calculations
-MAX_DELTA_T = 0.05
+MAX_DELTA_T = 0.5
 
 # Animation speed (10.0 looks good)
 ANIMATION_SPEED = 10.0
@@ -27,12 +27,6 @@ $running = true
 
 class Vertex
 	attr_accessor :x,:y,:z,:r,:g,:b
-	def get_xyz
-		[@x,@y,@z]
-	end
-	def get_rgb
-		[@r,@g,@b]
-	end
 end
 
 GRIDW = 50
@@ -129,17 +123,13 @@ def draw_screen
 	glRotatef($beta, 1.0, 0.0, 0.0)
 	glRotatef($alpha, 0.0, 0.0, 1.0)
 
-	# convert to direct memory representation 
-	vertex_data = $vertex.collect do |v| v.get_xyz() end
-	color_data = $vertex.collect do |v| v.get_rgb() end
-
-	vertex_data = vertex_data.flatten.pack("f*")
-	color_data = color_data.flatten.pack("f*")
-	
-  glVertexPointer(3, GL_FLOAT, 0, vertex_data)
-  glColorPointer(3, GL_FLOAT, 0, color_data)
-	
-	glDrawElements(GL_QUADS, 4*QUADNUM, GL_UNSIGNED_INT, $quad.pack("I*"))
+	glBegin(GL_QUADS)
+	$quad.each do |q|
+		v = $vertex[q]
+		glColor3f(v.r,v.g,v.b)
+		glVertex3f(v.x,v.y,v.z)
+	end
+	glEnd()
 	
 	glfwSwapBuffers()
 end
@@ -288,9 +278,10 @@ while $running
 		# Select iteration time step
 		$dt = dt_total > MAX_DELTA_T ? MAX_DELTA_T : dt_total
 		dt_total -= $dt
+
+		# Calculate wave propagation
+		calc()
 	end
-	# Calculate wave propagation
-	calc()
 
 	# Compute height of each vertex
 	adjustGrid()
