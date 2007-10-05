@@ -58,7 +58,7 @@ end
 task :extension => :default
 
 # Define the files that will go into the gem
-gem_files = FileList["{lib,ext,examples}/**/*"]
+gem_files = FileList["{lib,ext,examples,glfw-src}/**/*"]
 gem_files = gem_files.exclude("**/*.so", "**/*.o{,bj}", "ext/glfw/*.log","ext/glfw/Rakefile")
 
 spec = Gem::Specification.new do |s|
@@ -75,7 +75,6 @@ spec = Gem::Specification.new do |s|
 	s.has_rdoc          = false
 	s.add_dependency("mkrf", ">=0.2.0")
 	s.add_dependency("rake")
-	s.add_dependency("ruby-opengl", ">=0.40")
 end
 
 # Create a task for creating a ruby gem

@@ -29,7 +29,7 @@ def parse_libglfwpcin(path)
 	f.each do |line|
 		case line
 		when /Libs/
-			libs = line.chop.split("}")[1]
+			libs = line.chop.split("-lglfw")[1]
 		when /Cflags/
 			cflags = line.chop.split("}")[1]
 		end
@@ -54,6 +54,6 @@ Mkrf::Generator.new( 'glfw' ) do |g|
 		# static linking
 		g.objects << "../../glfw-src/lib/x11/libglfw.a"
 		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
-		g.ldshared << ' ' + lib
+		g.ldshared << ' -L../../glfw-src/lib/x11/ ' + lib
 	end
 end
