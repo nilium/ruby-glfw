@@ -42,7 +42,15 @@ when /(:?mswin|mingw)/ # windows
 	end
 # TODO
 when /darwin/ # mac
-# TODO
+	desc 'Does a full compile'
+	task :default => [:glfwlib,:glfw]
+
+	desc 'Compiles glfw library'
+	task :glfwlib do
+		Dir.chdir("glfw-src") do
+			sh "make macosx-gcc"
+		end
+	end
 else # general posix-x11
 	desc 'Does a full compile'
 	task :default => [:glfwlib,:glfw]

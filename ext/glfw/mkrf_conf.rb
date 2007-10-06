@@ -29,20 +29,27 @@ def parse_libglfwpcin(path)
 	f.each do |line|
 		case line
 		when /Libs/
-			libs = line.chop.split("-lglfw")[1]
+			tmp = line.chop.split("-lglfw")
+			if tmp and tmp.size>=2
+				libs = tmp[1]
+			end
 		when /Cflags/
-			cflags = line.chop.split("}")[1]
+			tmp = line.chop.split("}")
+			if tmp and tmp.size>=2
+				cflags = tmp[1]
+			end
 		end
 	end
 	[cflags,libs]	
 end
 
-
 Mkrf::Generator.new( 'glfw' ) do |g|
 	case RUBY_PLATFORM
 	when /darwin/
-	#        g.ldshared << ' -framework OpenGL'
-	#		TODO: test on darwin/mac
+		cf,lib = parse_libglfwpcin("../../glfw-src/lib/macosx/libglfw.pc.in")
+		g.objects << "../../glfw-src/lib/macosx/libglfw.a"
+		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
+		g.ldshared << ' -L../../glfw-src/lib/macosx/ ' + lib
 	when /mswin32/	
 		g.cflags << ' -DWIN32'
 		g.include_library( 'opengl32.lib', 'glVertex3d')
@@ -50,8 +57,6 @@ Mkrf::Generator.new( 'glfw' ) do |g|
 		#		TODO: add glfw.lib/dll dependency
 	else # general posix-x11
 		cf,lib = parse_libglfwpcin("../../glfw-src/lib/x11/libglfw.pc.in")
-		
-		# static linking
 		g.objects << "../../glfw-src/lib/x11/libglfw.a"
 		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
 		g.ldshared << ' -L../../glfw-src/lib/x11/ ' + lib
