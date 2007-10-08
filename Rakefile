@@ -21,12 +21,13 @@ require 'rubygems'
 require 'rake'
 require 'rake/clean'
 require 'rake/gempackagetask'
+require 'rake/rdoctask'
 require 'mkrf/rakehelper'
 
 CLEAN.include("ext/glfw/Rakefile", "ext/glfw/mkrf.log", "ext/glfw/*.so",
               "ext/glfw/*.bundle", "lib/*.so", "lib/*.bundle", "ext/glfw/*.o{,bj}", 
               "ext/glfw/*.lib", "ext/glfw/*.exp", "ext/glfw/*.pdb",
-              "pkg")
+              "pkg","rdoc")
 
 setup_extension('glfw', 'glfw')
 
@@ -51,19 +52,39 @@ when /darwin/ # mac
 			sh "make macosx-gcc"
 		end
 	end
+	desc 'Does full cleanup'
+	task :distclean => [:clean] do
+		Dir.chdir("glfw-src") do
+			sh "make macosx-clean"
+		end
+	end
 else # general posix-x11
 	desc 'Does a full compile'
 	task :default => [:glfwlib,:glfw]
-
 	desc 'Compiles glfw library'
 	task :glfwlib do
 		Dir.chdir("glfw-src") do
 			sh "make x11"
 		end
 	end
+	desc 'Does full cleanup'
+	task :distclean => [:clean] do
+		Dir.chdir("glfw-src") do
+			sh "make x11-clean"
+		end
+	end
 end
 
 task :extension => :default
+
+
+# build documentation
+rd = Rake::RDocTask.new("rdoc") do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = "GLFW bindings for Ruby"
+  rdoc.options << '--main' << 'README'
+  rdoc.rdoc_files.include('README', 'ext/glfw/glfw.c')
+end
 
 # Define the files that will go into the gem
 gem_files = FileList["{lib,ext,examples,glfw-src}/**/*"]
@@ -77,10 +98,12 @@ spec = Gem::Specification.new do |s|
 	s.homepage          = "http://ruby-glfw.rubyforge.org"
 	s.platform          = Gem::Platform::RUBY
 	s.summary           = "GLFW library bindings for Ruby"
+	s.rubyforge_project = "ruby-glfw"
 	s.files             = gem_files
 	s.extensions        << 'Rakefile'
 	s.require_path      = "lib"
-	s.has_rdoc          = false
+	s.has_rdoc          = true
+	s.rdoc_options 			= rd.options
 	s.add_dependency("mkrf", ">=0.2.0")
 	s.add_dependency("rake")
 end

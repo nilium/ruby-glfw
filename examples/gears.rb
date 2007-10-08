@@ -196,7 +196,7 @@ def draw
 		$stdout.flush
 		$t0 = $t
 		$frames = 0
-		if (($t >= 0.999 * $autoexit) && ($autoexit))
+		if (($t >= 0.999 * $autoexit) && ($autoexit!=0))
 			$running = false
 		end
 	end

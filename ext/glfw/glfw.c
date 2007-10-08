@@ -34,8 +34,6 @@
 static VALUE module;
 static int call_id; /* internal ruby id for method 'call' */
 
-static int glfw_initialized = GL_FALSE;
-
 #define GLFW_SET_CALLBACK_FUNC(_name_) \
 static VALUE glfw_Set##_name_##Callback(VALUE obj,VALUE arg1) \
 { \
@@ -55,22 +53,23 @@ static VALUE glfw_Set##_name_##Callback(VALUE obj,VALUE arg1) \
 
 /* API ref section 3.1 */
 
+/* Initializes GLFW library. This function is called automatically on module load */
+ 
 static VALUE glfw_Init(VALUE obj)
 {
-	if (glfw_initialized == GL_FALSE)
-		glfw_initialized = glfwInit();
-
-	return INT2NUM(glfw_initialized);
+	/* no-op, initialized at module load */
+	return INT2NUM(GL_TRUE);
 }
+
+/* Terminates GLFW library. This function is called automatically on program exit */
 
 static VALUE glfw_Terminate(VALUE obj)
 {
-	if (glfw_initialized == GL_TRUE)
-		glfwTerminate();
-	
+	glfwTerminate();
 	return Qnil;
 }
 
+/* Returns GLFW library version in form of array -> [major,minor,revision] */
 static VALUE glfw_GetVersion(VALUE obj)
 {
 	int major = 0;
@@ -82,6 +81,12 @@ static VALUE glfw_GetVersion(VALUE obj)
 
 /* API ref section 3.2 */
 
+/* Opens GLFW window
+  
+   Parameters: width, height, redbits, greenbits, bluebits, alphabits, depthbits, stencilbits, mode
+   
+   Returns: GL_TRUE on success, GL_FALSE on failure
+*/
 static VALUE glfw_OpenWindow(obj,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
 VALUE obj,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
 {
@@ -92,6 +97,11 @@ VALUE obj,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
 	return INT2NUM(ret);
 }
 
+/*
+  Sets additional properties for yet to be opened window
+  
+  Parameters: target, hint
+*/
 static VALUE glfw_OpenWindowHint(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -99,6 +109,7 @@ VALUE obj,arg1,arg2;
 	return Qnil;
 }
 
+/* Closes window */
 static VALUE glfw_CloseWindow(VALUE obj)
 {
 	glfwCloseWindow();
@@ -114,6 +125,7 @@ int GLFWCALL WindowClose_cb(void)
 }
 GLFW_SET_CALLBACK_FUNC(WindowClose)
 
+/* Sets window title */
 static VALUE glfw_SetWindowTitle(obj,arg1)
 VALUE obj,arg1;
 {
@@ -122,6 +134,7 @@ VALUE obj,arg1;
 	return Qnil;
 }
 
+/* Sets window size */
 static VALUE glfw_SetWindowSize(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -129,6 +142,7 @@ VALUE obj,arg1,arg2;
 	return Qnil;
 }
 
+/* Sets window position */
 static VALUE glfw_SetWindowPos(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -136,6 +150,7 @@ VALUE obj,arg1,arg2;
 	return Qnil;
 }
 
+/* Returns window size in form of array -> [width, height] */
 static VALUE glfw_GetWindowSize(VALUE obj)
 {
 	int width=0;
@@ -151,18 +166,21 @@ void GLFWCALL WindowSize_cb(int width, int height)
 }
 GLFW_SET_CALLBACK_FUNC(WindowSize)
 
+/* Iconifies window */
 static VALUE glfw_IconifyWindow(VALUE obj)
 {
 	glfwIconifyWindow();
 	return Qnil;
 }
 
+/* Restores window */
 static VALUE glfw_RestoreWindow(VALUE obj)
 {
 	glfwRestoreWindow();
 	return Qnil;
 }
 
+/* Returns window parameter specified by first argument */
 static VALUE glfw_GetWindowParam(VALUE obj,VALUE arg1)
 {
 	int ret;
@@ -170,12 +188,14 @@ static VALUE glfw_GetWindowParam(VALUE obj,VALUE arg1)
 	return INT2NUM(ret);
 }
 
+/* Swaps OpenGL buffers in double-buffering mode */
 static VALUE glfw_SwapBuffers(VALUE obj)
 {
 	glfwSwapBuffers();
 	return Qnil;
 }
 
+/* Sets minimal number of monitor frame retraces before buffers can be swapped (a.k.a Vertical sync), 0 = off */
 static VALUE glfw_SwapInterval(VALUE obj,VALUE arg1)
 {
 	glfwSwapInterval(NUM2INT(arg1));
@@ -206,6 +226,18 @@ VALUE vidmode_to_ruby(GLFWvidmode vm)
 		return vm_r;
 }
 
+/*
+  Returns all supported video modes in form of array of instances of Vidmode class
+ 
+  Vidmode class has following attributes:
+  * Width - screen width
+  * Height - screen height
+  * Redbits - number of bits per red channel
+  * GreenBits - number of bits per green channel
+  * BlueBits - number of bits per blue channel
+  
+  BPP = Redbits + GreenBits + BlueBits
+*/
 static VALUE glfw_GetVideoModes(VALUE obj)
 {
 	GLFWvidmode modes[MAGIC];
@@ -221,6 +253,9 @@ static VALUE glfw_GetVideoModes(VALUE obj)
 	return ret;
 }
 
+/*
+  Returns current desktop mode in form of instance of Vidmode class - see glfwGetVideoModes for details.
+*/
 static VALUE glfw_GetDesktopMode(VALUE obj)
 {
 	GLFWvidmode vm;
@@ -230,18 +265,21 @@ static VALUE glfw_GetDesktopMode(VALUE obj)
 
 /* API ref section 3.4 */
 
+/* Polls events */
 static VALUE glfw_PollEvents(VALUE obj)
 {
 	glfwPollEvents();
 	return Qnil;
 }
 
+/* Waits for events */
 static VALUE glfw_WaitEvents(VALUE obj)
 {
 	glfwWaitEvents();
 	return Qnil;
 }
 
+/* Queries status of key passed as argument. Returns either GLFW_PRESS in the key is hold down or GLFW_RELEASE if it is not. */
 static VALUE glfw_GetKey(VALUE obj,VALUE arg1)
 {
 	int ret;
@@ -249,6 +287,7 @@ static VALUE glfw_GetKey(VALUE obj,VALUE arg1)
 	return INT2NUM(ret);
 }
 
+/* Queries status of mouse button passed as argument. Returns either GLFW_PRESS in the button is hold down or GLFW_RELEASE if it is not. */
 static VALUE glfw_GetMouseButton(VALUE obj,VALUE arg1)
 {
 	int ret;
@@ -256,6 +295,7 @@ static VALUE glfw_GetMouseButton(VALUE obj,VALUE arg1)
 	return INT2NUM(ret);
 }
 
+/* Returns current mouse position form of array -> [xpos, ypos] */
 static VALUE glfw_GetMousePos(VALUE obj)
 {
 	int xpos=0;
@@ -264,6 +304,11 @@ static VALUE glfw_GetMousePos(VALUE obj)
 	return rb_ary_new3(2,INT2NUM(xpos),INT2NUM(ypos));
 }
 
+/*
+  Sets mouse position
+  
+  Parameters: xpos,ypos
+*/
 static VALUE glfw_SetMousePos(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -271,6 +316,7 @@ VALUE obj,arg1,arg2;
 	return Qnil;
 }
 
+/* Returns current mouse wheel position */
 static VALUE glfw_GetMouseWheel(VALUE obj)
 {
 	int ret;
@@ -278,12 +324,20 @@ static VALUE glfw_GetMouseWheel(VALUE obj)
 	return INT2NUM(ret);
 }
 
+/* Sets mouse wheel position */
 static VALUE glfw_SetMouseWheel(VALUE obj,VALUE arg1)
 {
 	glfwSetMouseWheel(NUM2INT(arg1));
 	return Qnil;
 }
 
+/*
+  Queries joystick axes positions
+  
+  Parameters: joystick
+  
+  Returns: array of Floats representing axes positions or nil if given joystick is not present
+*/
 static VALUE glfw_GetJoystickPos(VALUE obj,VALUE arg1)
 {
 	float *pos;
@@ -305,6 +359,13 @@ static VALUE glfw_GetJoystickPos(VALUE obj,VALUE arg1)
 	return ret;
 }
 
+/*
+  Queries joystick button states
+  
+  Parameters: joystick
+  
+  Returns: array of numbers representing buttons' states (GLFW_PRESS or GLFW_RELEASE) or nil if given joystick is not present
+*/
 static VALUE glfw_GetJoystickButtons(VALUE obj,VALUE arg1)
 {
 	unsigned char *buttons;
@@ -361,6 +422,14 @@ void GLFWCALL MouseWheel_cb(int pos)
 }
 GLFW_SET_CALLBACK_FUNC(MouseWheel)
 
+
+/*
+  Queries joystick parameters
+  
+  Parameters: joystick, param 
+  
+  Returns: given parameter state
+*/
 static VALUE glfw_GetJoystickParam(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -371,6 +440,7 @@ VALUE obj,arg1,arg2;
 
 /* API ref section 3.5 */
 
+/* Returns time (as Float) passed since last call to glfwInit or glfwSetTime */
 static VALUE glfw_GetTime(VALUE obj)
 {
 	double time;
@@ -378,12 +448,14 @@ static VALUE glfw_GetTime(VALUE obj)
 	return rb_float_new(time);
 }
 
+/* Sets timer to given time (Float) */
 static VALUE glfw_SetTime(VALUE obj,VALUE arg1)
 {
 	glfwSetTime(NUM2DBL(arg1));
 	return Qnil;
 }
 
+/* Sleeps for given amount of time (Float) */
 static VALUE glfw_Sleep(VALUE obj,VALUE arg1)
 {
 	glfwSleep(NUM2DBL(arg1));
@@ -430,6 +502,13 @@ static VALUE GLFWimage_BPP(VALUE obj)
 	return INT2NUM(img->BytesPerPixel);
 }
 
+/*
+  Reads image from file and stores it as GLFWimage object
+  
+  Parameters: filename, flags
+  
+  Returns: instance of GLFWimage class or nil if function failed
+*/
 static VALUE glfw_ReadImage(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -446,6 +525,13 @@ VALUE obj,arg1,arg2;
 	return Data_Wrap_Struct(GLFWimage_class,0,GLFWimage_free,img);
 }
 
+/*
+  Reads image from string (containing raw image data) and stores it as GLFWimage object
+  
+  Parameters: string, flags
+  
+  Returns: instance of GLFWimage class or nil if function failed
+*/
 static VALUE glfw_ReadMemoryImage(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -462,6 +548,11 @@ VALUE obj,arg1,arg2;
 	return Data_Wrap_Struct(GLFWimage_class,0,GLFWimage_free,img);
 }
 
+/*
+  Frees data in GLFWimage object and marks it for deletion.
+  
+  Parameters: object
+*/
 static VALUE glfw_FreeImage(VALUE obj,VALUE arg1)
 {
 	GLFWimage *img;
@@ -470,6 +561,13 @@ static VALUE glfw_FreeImage(VALUE obj,VALUE arg1)
 	return Qnil;
 }
 
+/*
+  Reads image from file and loads it as texture to current texturing unit
+  
+  Parameters: filename, flags
+  
+  Returns: GL_TRUE on success, GL_FALSE on failure
+*/
 static VALUE glfw_LoadTexture2D(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -479,6 +577,13 @@ VALUE obj,arg1,arg2;
 	return INT2NUM(ret);
 }
 
+/*
+  Reads raw image data from string and loads it as texture to current texturing unit
+  
+  Parameters: string, flags
+  
+  Returns: GL_TRUE on success, GL_FALSE on failure
+*/
 static VALUE glfw_LoadMemoryTexture2D(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -488,6 +593,13 @@ VALUE obj,arg1,arg2;
 	return INT2NUM(ret);
 }
 
+/*
+  Reads image from GLFWimage object and loads it as texture to current texturing unit
+  
+  Parameters: object, flags
+  
+  Returns: GL_TRUE on success, GL_FALSE on failure
+*/
 static VALUE glfw_LoadTextureImage2D(obj,arg1,arg2)
 VALUE obj,arg1,arg2;
 {
@@ -500,6 +612,7 @@ VALUE obj,arg1,arg2;
 
 /* API ref section 3.7 */
 
+/* Takes OpenGL extension name and returns GL_TRUE if it is supported on this system */
 static VALUE glfw_ExtensionSupported(VALUE obj,VALUE arg1)
 {
 	int ret;
@@ -510,6 +623,7 @@ static VALUE glfw_ExtensionSupported(VALUE obj,VALUE arg1)
 
 /* NOTE: glfwGetProcAddress not implemented, use ruby-opengl functions instead */
 
+/* Returns installed OpenGL version in form of array -> [major,minor,revision] */
 static VALUE glfw_GetGLVersion(VALUE obj)
 {
 	int major = 0;
@@ -524,18 +638,21 @@ static VALUE glfw_GetGLVersion(VALUE obj)
 
 /* API ref section 3.11 */
 
+/* Enables certain GLFW feature */
 static VALUE glfw_Enable(VALUE obj,VALUE arg1)
 {
 	glfwEnable(NUM2INT(arg1));
 	return Qnil;
 }
 
+/* Disables certain GLFW feature */
 static VALUE glfw_Disable(VALUE obj,VALUE arg1)
 {
 	glfwDisable(NUM2INT(arg1));
 	return Qnil;
 }
 
+/* Returns number of active processors */
 static VALUE glfw_GetNumberOfProcessors(VALUE obj)
 {
 	int ret;
@@ -543,15 +660,30 @@ static VALUE glfw_GetNumberOfProcessors(VALUE obj)
 	return INT2NUM(ret);
 }
 
-
-
 DLLEXPORT void Init_glfw()
 {
+	/* Let's initialize the GLFW library at module load */
+	if (glfwInit()!=GL_TRUE) {
+	  rb_raise(rb_eRuntimeError, "GLFW library initialization failed");
+		/* not reached */
+	}
+	
+	/* GLFW module comment here */
 	module = rb_define_module("Glfw");
 
 	call_id = rb_intern("call");
 
-	/* GLFWimage struct/class and accessor methods */
+	/*
+	  GLFWimage is class which instances contains image loaded by GLFW imaging API.
+	 
+	  Apart from using the objects in function calls, you can access followinf properties (read-only) :
+	  * Width - image width 
+	  * Height - image height
+	  * Format - image pixel format; is one of OpenGL types (GL_RGBA, GL_LUMINANCE etc.)
+	  * BytesPerPixel - number of bytes per pixel
+
+	  Image data can be manually freed by calling glfwFreeImage(object)
+	*/
 	GLFWimage_class = rb_define_class("GLFWimage", rb_cObject);
 	rb_define_method(GLFWimage_class, "Width", GLFWimage_width, 0);
 	rb_define_method(GLFWimage_class, "Height", GLFWimage_height, 0);
@@ -772,12 +904,6 @@ DLLEXPORT void Init_glfw()
 	rb_define_const(module, "GL_TRUE", INT2NUM(GL_TRUE));
 	rb_define_const(module, "GL_FALSE", INT2NUM(GL_FALSE));
 
-	/* Let's initialize the GLFW library at module load */
-	rb_eval_string("Glfw.glfwInit");
-
-	/* calls Glfw.glfwTerminate() at ruby exit; the actuall call
-	   to C API glfwTerminate() is executed only if glfwInit succeeded
-	   and glfw_Terminate wasn't called before, meaning user is free to
-	   call Glfw.glfwTerminate him/herself */
+	/* calls Glfw.glfwTerminate() at ruby exit */
 	rb_eval_string("at_exit do Glfw.glfwTerminate end");
 }
