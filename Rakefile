@@ -34,14 +34,27 @@ setup_extension('glfw', 'glfw')
 case RUBY_PLATFORM
 when /(:?mswin|mingw)/ # windows
 	desc 'Does a full win32 compile'
-	task :default do
+	task :default => [:glfwlib] do
 		Dir.chdir("ext\\glfw") do
 			sh "ruby mkrf_conf.rb"
 			sh "call rake --nosearch"
-			sh "copy #{ext}.so ..\\..\\lib"
+			sh "copy glfw.so ..\\..\\lib"
 		end
 	end
-# TODO
+
+	desc 'Compiles glfw library'
+	task :glfwlib do
+		Dir.chdir("glfw-src") do
+			sh "nmake.exe win32-msvc"
+		end
+	end
+	
+	desc 'Does full cleanup'
+	task :distclean => [:clean] do
+		Dir.chdir("glfw-src") do
+			sh "nmake.exe win32-clean"
+		end
+	end
 when /darwin/ # mac
 	desc 'Does a full compile'
 	task :default => [:glfwlib,:glfw]

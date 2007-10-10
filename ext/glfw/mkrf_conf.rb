@@ -51,10 +51,11 @@ Mkrf::Generator.new( 'glfw' ) do |g|
 		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
 		g.ldshared << ' -L../../glfw-src/lib/macosx/ ' + lib
 	when /mswin32/	
-		g.cflags << ' -DWIN32'
-		g.include_library( 'opengl32.lib', 'glVertex3d')
-		#        g.include_library( 'user32.lib', '') # is this needed ?
-		#		TODO: add glfw.lib/dll dependency
+		g.objects << "../../glfw-src/lib/win32/glfw.lib"
+		g.cflags << ' -DWIN32 -I../../glfw-src/include '
+		g.ldshared << ' /NODEFAULTLIB:LIBC '
+		g.include_library( 'glu32.lib', '')
+		g.include_library( 'opengl32.lib', '')
 	else # general posix-x11
 		cf,lib = parse_libglfwpcin("../../glfw-src/lib/x11/libglfw.pc.in")
 		g.objects << "../../glfw-src/lib/x11/libglfw.a"
