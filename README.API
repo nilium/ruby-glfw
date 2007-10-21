@@ -1,0 +1,72 @@
+= Usage and API
+
+The function names and general usage are equivalent to C (you can read the
+GLFW C API documentation here[http://glfw.sourceforge.net/GLFWUsersGuide26.pdf]), with some differences outlined bellow.
+
+You can start exploring the RDoc documentation for the bindings by selecting the Glfw class from the table above.
+
+= Naming
+
+The naming conventions follows those of ruby-opengl bindings - all the
+constants and functions are contained in 'Glfw' module, in file glfw.so which
+is loaded by writing
+  
+ require 'glfw'
+
+You can also add
+
+ include Glfw
+
+which will export the module's functions and constants to the global namespace, so
+instead of writing
+
+ Glfw.glfwSomeFunction(Glfw::GLFW_SOME_CONSTANT)
+
+in full scope, you can then use the C-like syntax:
+
+ glfwSomeFunction(GLFW_SOME_CONSTANT)
+
+Loading the module will call Glfw.glfwInit function, and will generate ruby
+exception should the initialization fail. At the end of your program,
+Glfw.glfwTerminate is automatically called, although you are free to call it
+yourself if you wish.
+
+= Callbacks
+
+For specifying callback functions just pass ruby Proc object, e.g
+
+ mouse_callback = lambda do |x,y|
+  puts "Mouse moved! current mouse position is #{x} #{y}"
+ end
+ ...
+ glfwSetMousePosCallback(mouse_callback)
+
+or convert regular function, as
+
+ def mouse_callback(x,y)
+  puts "Mouse moved! current mouse position is #{x} #{y}"
+ end
+ ...
+ glfwSetMousePosCallback(method("mouse_callback").to_proc)
+
+Passing 'nil' will disable the callback.
+	
+= GLFW and GLUT or other windowing libraries
+
+You can combine GLFW with other GL or graphic libraries as long as you use
+only one of them for window creation/destruction, events callbacks and general
+window state modifications. For example you can write:
+
+ require 'glfw'
+ require 'glut'
+ include Glfw,Glut
+ ...
+ glfwCreateWindow(...) # use GLFW to create OpenGL window
+ glutSolidSphere(...)  # use GLUT to draw sphere
+ ...
+
+= Examples
+
+You can find the examples in the 'examples' directory - they are pretty much
+just conversion of the GLFW C examples. The 'particles' example was tuned down
+for compensation of ruby speed - see the file particles.rb for more details.

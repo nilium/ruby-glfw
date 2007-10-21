@@ -21,8 +21,13 @@ require 'rubygems'
 require 'mkrf'
 require 'rbconfig'
 
+# where are the GLFW sources, relative to build directory
+$glfw_dir = "../../glfw-src"
+$glfw_dir_lib = $glfw_dir + "/lib"
+$glfw_dir_inc = $glfw_dir + "/include"
+
 # parses options for compiler and linker from will-be-pkgconfig file
-# created after compiling the glfw library itself
+# created after compiling the bundled GLFW library itself
 def parse_libglfwpcin(path)
 	libs = cflags = ""
 	f = File.open(path)
@@ -46,20 +51,20 @@ end
 Mkrf::Generator.new( 'glfw' ) do |g|
 	case RUBY_PLATFORM
 	when /darwin/
-		cf,lib = parse_libglfwpcin("../../glfw-src/lib/macosx/libglfw.pc.in")
-		g.objects << "../../glfw-src/lib/macosx/libglfw.a"
-		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
-		g.ldshared << ' -L../../glfw-src/lib/macosx/ ' + lib
+		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/macosx/libglfw.pc.in")
+		g.objects << $glfw_dir_lib + "/macosx/libglfw.a"
+		g.cflags << ' -Wall -I#{$glfw_dir_inc} ' + cf
+		g.ldshared << ' -L#{$glfw_dir_lib}/macosx/ ' + lib
 	when /mswin32/	
-		g.objects << "../../glfw-src/lib/win32/glfw.lib"
-		g.cflags << ' -DWIN32 -I../../glfw-src/include '
+		g.objects << $glfw_dir_lib + "/win32/glfw.lib"
+		g.cflags << ' -DWIN32 -I#{$glfw_dir_inc} '
 		g.ldshared << ' /NODEFAULTLIB:LIBC '
 		g.include_library( 'glu32.lib', '')
 		g.include_library( 'opengl32.lib', '')
 	else # general posix-x11
-		cf,lib = parse_libglfwpcin("../../glfw-src/lib/x11/libglfw.pc.in")
-		g.objects << "../../glfw-src/lib/x11/libglfw.a"
-		g.cflags << ' -Wall -I../../glfw-src/include ' + cf
-		g.ldshared << ' -L../../glfw-src/lib/x11/ ' + lib
+		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/x11/libglfw.pc.in")
+		g.objects << $glfw_dir_lib + "/x11/libglfw.a"
+		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf
+		g.ldshared << ' -L' + $glfw_dir_lib + '/x11/ ' + lib
 	end
 end

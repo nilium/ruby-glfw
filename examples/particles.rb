@@ -11,32 +11,31 @@
 #  3) Fog
 #  4) Texturing
 #  5) Display lists (for drawing the static environment geometry)
-#  6) Vertex arrays (for drawing the particles)
+#  6) OpenGL 2.0 point sprites (for particle drawing if available)
 #  7) GL_EXT_separate_specular_color is used (if available)
-#
-# Even more so, this program uses multi threading. The program is
-# essentialy divided into a main rendering thread and a particle physics
-# calculation thread. My benchmarks under Windows 2000 on a single
-# processor system show that running this program as two threads instead
-# of a single thread means no difference (there may be a very marginal
-# advantage for the multi threaded case). On dual processor systems I
-# have had reports of 5-25% of speed increase when running this program
-# as two threads instead of one thread.
-#
-# The default behaviour of this program is to use two threads. To force
-# a single thread to be used, use the command line switch -s.
 #
 # To run a fixed length benchmark (60 s), use the command line switch -b.
 #
-# Benchmark results (640x480x16, best of three tests):
-#
-#  CPU               GFX                   1 thread      2 threads
-#  Athlon XP 2700+   GeForce Ti4200 (oc)    757 FPS        759 FPS
-#  P4 2.8 GHz (SMT)  GeForce FX5600         548 FPS        550 FPS
-#
 # One more thing: Press 'w' during the demo to toggle wireframe mode.
 #========================================================================
+#
 # Converted to ruby from GLFW example particles.c
+#
+# Ruby version notes:
+#
+# Number of particles had to be decreased 10-fold to accomodate for ruby
+# speed (or lack of thereof) - interpreted languages are not exactly suited
+# for realtime processing of large amounts of data, and ruby is no exception.
+#
+# Using point sprites and immediate mode, the ruby version is about 60x
+# slower then the C version (assuming equal number of particles). If
+# you need large-scale particle system, better solution would be to
+# either offload as much as possible to the GPU or write it in C as
+# ruby extension/module.
+#
+# Also I didn't use vertex arrays/buffers, because converting between ruby
+# and C representation of variables each frame is actually slower then the
+# function call overhead of OpenGL immediate mode.
 
 require 'opengl'
 require 'glfw'

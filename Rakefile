@@ -27,13 +27,43 @@ require 'mkrf/rakehelper'
 CLEAN.include("ext/glfw/Rakefile", "ext/glfw/mkrf.log", "ext/glfw/*.so",
               "ext/glfw/*.bundle", "lib/*.so", "lib/*.bundle", "ext/glfw/*.o{,bj}", 
               "ext/glfw/*.lib", "ext/glfw/*.exp", "ext/glfw/*.pdb",
-              "pkg","rdoc")
+              "pkg","html")
 
 setup_extension('glfw', 'glfw')
 
+# setup building and cleaning the bundled GLFW library
 case RUBY_PLATFORM
-when /(:?mswin|mingw)/ # windows
-	desc 'Does a full win32 compile'
+when /(:?mswin|mingw)/ # windows, MSVC 6
+	lib_build = "nmake.exe win32-msvc"
+	lib_clean = "nmake.exe win32-clean"
+when /darwin/ # mac
+	lib_build = "make macosx-gcc"
+	lib_clean = "make macosx-clean"
+else # general posix-x11
+	lib_build = "make x11"
+	lib_clean = "make x11-clean"
+end
+
+desc 'Compiles the bundled GLFW library'
+task :glfwlib do
+	Dir.chdir("glfw-src") do
+		sh lib_build
+	end
+end
+
+# full cleanup
+desc 'Cleanup, includes cleaup of the bunded GLFW library'
+task :distclean => [:clean] do
+	Dir.chdir("glfw-src") do
+		sh lib_clean
+	end
+end
+
+# setup the build
+case RUBY_PLATFORM
+when /(:?mswin|mingw)/
+	# rake on windows doesn't work properly for subdirectories
+	# so iterate manually
 	task :default => [:glfwlib] do
 		Dir.chdir("ext\\glfw") do
 			sh "ruby mkrf_conf.rb"
@@ -41,62 +71,19 @@ when /(:?mswin|mingw)/ # windows
 			sh "copy glfw.so ..\\..\\lib"
 		end
 	end
-
-	desc 'Compiles glfw library'
-	task :glfwlib do
-		Dir.chdir("glfw-src") do
-			sh "nmake.exe win32-msvc"
-		end
-	end
-	
-	desc 'Does full cleanup'
-	task :distclean => [:clean] do
-		Dir.chdir("glfw-src") do
-			sh "nmake.exe win32-clean"
-		end
-	end
-when /darwin/ # mac
-	desc 'Does a full compile'
+else
+	# other systems
 	task :default => [:glfwlib,:glfw]
-
-	desc 'Compiles glfw library'
-	task :glfwlib do
-		Dir.chdir("glfw-src") do
-			sh "make macosx-gcc"
-		end
-	end
-	desc 'Does full cleanup'
-	task :distclean => [:clean] do
-		Dir.chdir("glfw-src") do
-			sh "make macosx-clean"
-		end
-	end
-else # general posix-x11
-	desc 'Does a full compile'
-	task :default => [:glfwlib,:glfw]
-	desc 'Compiles glfw library'
-	task :glfwlib do
-		Dir.chdir("glfw-src") do
-			sh "make x11"
-		end
-	end
-	desc 'Does full cleanup'
-	task :distclean => [:clean] do
-		Dir.chdir("glfw-src") do
-			sh "make x11-clean"
-		end
-	end
 end
 
+# for gem building
 task :extension => :default
 
-
 # build documentation
-rd = Rake::RDocTask.new("rdoc") do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
+rd = Rake::RDocTask.new do |rdoc|
+  rdoc.main = "README.API"
   rdoc.title    = "GLFW bindings for Ruby"
-  rdoc.options << '--main' << 'README'
-  rdoc.rdoc_files.include('README', 'ext/glfw/glfw.c')
+  rdoc.rdoc_files.include('README.API', 'ext/glfw/glfw.c')
 end
 
 # Define the files that will go into the gem
@@ -116,7 +103,8 @@ spec = Gem::Specification.new do |s|
 	s.extensions        << 'Rakefile'
 	s.require_path      = "lib"
 	s.has_rdoc          = true
-	s.rdoc_options 			= rd.options
+	s.rdoc_options 			<< '--main' << rd.main << '--title' << rd.title
+  s.extra_rdoc_files = rd.rdoc_files
 	s.add_dependency("mkrf", ">=0.2.0")
 	s.add_dependency("rake")
 end
