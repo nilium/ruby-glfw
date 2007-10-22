@@ -346,8 +346,8 @@ MousePosFun = lambda do |x,y|
 		$rot_y += x - $xpos
 		$do_redraw = 1
 	when 4:
-		$rot_y += y - $ypos
-		$rot_z += x - $xpos
+		$rot_y += x - $xpos
+		$rot_z += y - $ypos
 		$do_redraw = 1
 	else
 		# Do nothing for perspective view, or if no view is selected
