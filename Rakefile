@@ -64,6 +64,10 @@ case RUBY_PLATFORM
 when /(:?mswin|mingw)/
 	# rake on windows doesn't work properly for subdirectories
 	# so iterate manually
+	begin
+		Dir.mkdir("lib")
+	rescue
+	end
 	task :default => [:glfwlib] do
 		Dir.chdir("ext\\glfw") do
 			sh "ruby mkrf_conf.rb"
