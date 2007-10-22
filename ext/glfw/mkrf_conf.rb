@@ -53,11 +53,11 @@ Mkrf::Generator.new( 'glfw' ) do |g|
 	when /darwin/
 		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/macosx/libglfw.pc.in")
 		g.objects << $glfw_dir_lib + "/macosx/libglfw.a"
-		g.cflags << ' -Wall -I#{$glfw_dir_inc} ' + cf
-		g.ldshared << ' -L#{$glfw_dir_lib}/macosx/ ' + lib
+		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf
+		g.ldshared << ' -L' + $glfw_dir_lib + '/macosx/ ' + lib
 	when /mswin32/	
 		g.objects << $glfw_dir_lib + "/win32/glfw.lib"
-		g.cflags << ' -DWIN32 -I#{$glfw_dir_inc} '
+		g.cflags << ' -DWIN32 -I' + $glfw_dir_inc + ' '
 		g.ldshared << ' /NODEFAULTLIB:LIBC '
 		g.include_library( 'glu32.lib', '')
 		g.include_library( 'opengl32.lib', '')
