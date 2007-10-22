@@ -14,7 +14,7 @@ include Gl,Glu,Glfw
 # main
 
 # Open OpenGL window
-if (glfwOpenWindow( 640, 480, 0,0,0,0, 0,0, GLFW_WINDOW ) == GL_FALSE)
+if (glfwOpenWindow( 640, 480, 0,0,0,0, 0,0, GLFW_WINDOW ) == false)
 	exit
 end
 
@@ -84,6 +84,6 @@ while running == true
 	
 	# Check if the ESC key was pressed or the window was closed
 	running = ( glfwGetKey( GLFW_KEY_ESC ) == GLFW_RELEASE &&
-						  glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE )
+						  glfwGetWindowParam( GLFW_OPENED ) == true )
 end
 

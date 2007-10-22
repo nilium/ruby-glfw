@@ -12,7 +12,7 @@ require 'glfw'
 include Gl,Glu,Glfw
 
 # Open OpenGL window
-if( glfwOpenWindow( 640, 480, 0,0,0,0, 0,0, GLFW_WINDOW ) == GL_FALSE )
+if( glfwOpenWindow( 640, 480, 0,0,0,0, 0,0, GLFW_WINDOW ) == false )
 	exit
 end
 
@@ -24,7 +24,7 @@ glfwSwapInterval( 0 )
 
 # Load texture from file, and build all mipmap levels. The
 # texture is automatically uploaded to texture memory.
-if( glfwLoadTexture2D( "mipmaps.tga", GLFW_BUILD_MIPMAPS_BIT ) == GL_FALSE)
+if( glfwLoadTexture2D( "mipmaps.tga", GLFW_BUILD_MIPMAPS_BIT ) == false )
 	exit
 end
 
@@ -99,6 +99,6 @@ while running
 	
 	# Check if the ESC key was pressed or the window was closed
 	running = ( glfwGetKey( GLFW_KEY_ESC ) == GLFW_RELEASE &&
-						  glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE )
+						  glfwGetWindowParam( GLFW_OPENED ) == true )
 end
     

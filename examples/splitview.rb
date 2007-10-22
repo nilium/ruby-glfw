@@ -388,7 +388,7 @@ end
 running = true
 
 # Open OpenGL window
-if( glfwOpenWindow( 500, 500, 0,0,0,0, 16,0, GLFW_WINDOW ) == GL_FALSE )
+if( glfwOpenWindow( 500, 500, 0,0,0,0, 16,0, GLFW_WINDOW ) == false )
 	exit
 end
 
@@ -427,6 +427,6 @@ while running
 	glfwWaitEvents()
 
 	# Check if the ESC key was pressed or the window was closed
-  running = (glfwGetKey( GLFW_KEY_ESC ) == GL_FALSE) &&
-             (glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE)
+  running = (glfwGetKey( GLFW_KEY_ESC ) == GLFW_RELEASE) &&
+             (glfwGetWindowParam( GLFW_OPENED ) == true)
 end

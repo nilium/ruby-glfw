@@ -749,7 +749,7 @@ ARGV.each do |arg|
 end
 
 # Open OpenGL fullscreen window
-if( glfwOpenWindow( WIDTH, HEIGHT, 5,6,5,0, 16,0, GLFW_FULLSCREEN ) == GL_FALSE)
+if( glfwOpenWindow( WIDTH, HEIGHT, 5,6,5,0, 16,0, GLFW_FULLSCREEN ) == false)
 	exit
 end
 
@@ -819,7 +819,7 @@ while( $running )
 	glfwSwapBuffers()
 	
 	# Check if window was closed
-	$running = $running && (glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE)
+	$running = $running && (glfwGetWindowParam( GLFW_OPENED ) == true)
 	
 	# Increase frame count
 	frames += 1

@@ -224,7 +224,7 @@ def GameMenu
 		glfwSwapBuffers()
 
 		# Check for keys
-		if( glfwGetKey( ?Q ) == GLFW_PRESS || glfwGetWindowParam( GLFW_OPENED ) == GL_FALSE )
+		if( glfwGetKey( ?Q ) == GLFW_PRESS || glfwGetWindowParam( GLFW_OPENED ) == false )
 			option = MENU_QUIT
 		elsif( glfwGetKey( GLFW_KEY_F1 ) == GLFW_PRESS )
 			option = MENU_PLAY
@@ -596,7 +596,7 @@ def GameOver
 	
 	# Until the user presses ESC or SPACE
 	while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS && glfwGetKey( GLFW_KEY_SPACE ) != GLFW_PRESS &&
-	        glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE )
+	        glfwGetWindowParam( GLFW_OPENED ) == true )
 		# Draw display
 		UpdateDisplay()
 		
@@ -656,7 +656,7 @@ def GameLoop
 
 	# Loop until the game ends
 	playing = true
-	while( playing && glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE )
+	while( playing && glfwGetWindowParam( GLFW_OPENED ) == true )
 		# Frame timer
 		$oldtime = $thistime
 		$thistime = glfwGetTime()
@@ -716,7 +716,7 @@ menuoption = MENU_NONE
 # Initialize GLFW
 
 # Open OpenGL window
-if( glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 16,0, GLFW_FULLSCREEN ) == GL_FALSE )
+if( glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 16,0, GLFW_FULLSCREEN ) == false )
 	exit
 end
 
@@ -736,6 +736,6 @@ while( menuoption != MENU_QUIT )
 end
 
 # Unload all textures
-if( glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE)
+if( glfwGetWindowParam( GLFW_OPENED ) == true)
 	glDeleteTextures( $tex_id )
 end

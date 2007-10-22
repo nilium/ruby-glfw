@@ -3,12 +3,10 @@
 The function names and general usage are equivalent to C (you can read the
 GLFW C API documentation here[http://glfw.sourceforge.net/GLFWUsersGuide26.pdf]), with some differences outlined bellow.
 
-You can start exploring the RDoc documentation for the bindings by selecting the Glfw class from the table above.
-
 = Naming
 
 The naming conventions follows those of ruby-opengl bindings - all the
-constants and functions are contained in 'Glfw' module, in file glfw.so which
+constants and functions are contained in Glfw module (click for RDoc documentation), in file glfw.so which
 is loaded by writing
   
  require 'glfw'
@@ -30,6 +28,9 @@ Loading the module will call Glfw.glfwInit function, and will generate ruby
 exception should the initialization fail. At the end of your program,
 Glfw.glfwTerminate is automatically called, although you are free to call it
 yourself if you wish.
+
+Functions working with boolean states are using ruby's true/false rather then GL_TRUE/GL_FALSE (both for
+input and output).
 
 = Callbacks
 

@@ -82,7 +82,7 @@ end
 # main
 
 # Open OpenGL window
-if (glfwOpenWindow( 250,100, 0,0,0,0, 0,0, GLFW_WINDOW ) == GL_FALSE)
+if (glfwOpenWindow( 250,100, 0,0,0,0, 0,0, GLFW_WINDOW ) == false)
 	exit
 end
 
@@ -113,5 +113,5 @@ while $running
 	glfwSwapBuffers()
 	
 	# Check if the window was closed
-	$running = ($running && glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE)
+	$running = ($running && glfwGetWindowParam( GLFW_OPENED ) == true)
 end

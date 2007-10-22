@@ -239,7 +239,7 @@ height = 480
 mode   = GLFW_WINDOW
 
 # Open window */
-if( glfwOpenWindow(width,height,0,0,0,0,16,0,mode) == GL_FALSE )
+if( glfwOpenWindow(width,height,0,0,0,0,16,0,mode) == false )
 	puts "Could not open window"
 	exit
 end

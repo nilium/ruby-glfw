@@ -214,7 +214,7 @@ key = lambda do |k,action|
 
 	case k
 	when ?Z
-    if( glfwGetKey( GLFW_KEY_LSHIFT )==GL_TRUE)
+    if( glfwGetKey( GLFW_KEY_LSHIFT ) == GLFW_PRESS)
       $view_rotz -= 5.0;
     else
       $view_rotz += 5.0;
@@ -295,7 +295,7 @@ end
 # program entry
 
 # Init GLFW and open window
-if( glfwOpenWindow( 300,300, 0,0,0,0, 16,0, GLFW_WINDOW ) == GL_FALSE)
+if( glfwOpenWindow( 300,300, 0,0,0,0, 16,0, GLFW_WINDOW ) == false)
 	exit
 end
 
@@ -320,7 +320,7 @@ while $running
   glfwSwapBuffers()
 
 	# Was the window closed?
-	if( glfwGetWindowParam( GLFW_OPENED ) == GL_FALSE)
+	if( glfwGetWindowParam( GLFW_OPENED ) == false)
 		$running = false
 	end
 end

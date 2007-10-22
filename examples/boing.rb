@@ -488,7 +488,7 @@ end
 running = true
 
 # Init GLFW
-if( glfwOpenWindow( 400,400, 0,0,0,0, 16,0, GLFW_WINDOW ) == GL_FALSE)
+if( glfwOpenWindow( 400,400, 0,0,0,0, 16,0, GLFW_WINDOW ) == false)
 	exit
 end
 glfwSetWindowTitle( "Boing (classic Amiga demo)" )
@@ -513,7 +513,7 @@ while running
 	glfwSwapBuffers()
 
 	# Check if we are still running
-	running = (glfwGetKey( GLFW_KEY_ESC ) == GL_FALSE) &&
-						(glfwGetWindowParam( GLFW_OPENED ) == GL_TRUE)
+	running = (glfwGetKey( GLFW_KEY_ESC ) == GLFW_RELEASE) &&
+						(glfwGetWindowParam( GLFW_OPENED ) == true)
 	
 end
