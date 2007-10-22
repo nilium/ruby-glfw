@@ -92,7 +92,7 @@ gem_files = gem_files.exclude("**/*.so", "**/*.o{,bj}", "ext/glfw/*.log","ext/gl
 
 spec = Gem::Specification.new do |s|
 	s.name              = "ruby-glfw"
-	s.version           = "0.1"
+	s.version           = "0.9"
 	s.author            = "Jan Dvorak"
 	s.email             = "jan.dvorak@kraxnet.cz"
 	s.homepage          = "http://ruby-glfw.rubyforge.org"
