@@ -91,7 +91,7 @@ rd = Rake::RDocTask.new do |rdoc|
 end
 
 # Define the files that will go into the gem
-gem_files = FileList["{lib,ext,examples,glfw-src}/**/*"]
+gem_files = FileList["{lib,ext,examples,glfw-src,website}/**/*","README"]
 gem_files = gem_files.exclude("**/*.so", "**/*.o{,bj}", "ext/glfw/*.log","ext/glfw/Rakefile")
 
 spec = Gem::Specification.new do |s|
