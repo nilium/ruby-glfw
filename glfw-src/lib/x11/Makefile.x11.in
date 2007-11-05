@@ -112,67 +112,67 @@ libglfw.so: $(SHARED_OBJS)
 # Rules for building static library object files
 ##########################################################################
 enable.o: ../enable.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../enable.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../enable.c
 
 fullscreen.o: ../fullscreen.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../fullscreen.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../fullscreen.c
 
 glext.o: ../glext.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../glext.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../glext.c
 
 image.o: ../image.c ../internal.h platform.h
-	$(CC) $(CFLAGS_SPEED) -o $@ ../image.c
+	$(CC) -fPIC $(CFLAGS_SPEED) -o $@ ../image.c
 
 init.o: ../init.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../init.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../init.c
 
 input.o: ../input.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../input.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../input.c
 
 joystick.o: ../joystick.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../joystick.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../joystick.c
 
 stream.o: ../stream.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../stream.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../stream.c
 
 tga.o: ../tga.c ../internal.h platform.h
-	$(CC) $(CFLAGS_SPEED) -o $@ ../tga.c
+	$(CC) -fPIC $(CFLAGS_SPEED) -o $@ ../tga.c
 
 thread.o: ../thread.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../thread.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../thread.c
 
 time.o: ../time.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../time.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../time.c
 
 window.o: ../window.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ ../window.c
+	$(CC) -fPIC $(CFLAGS) -o $@ ../window.c
 
 x11_enable.o: x11_enable.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_enable.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_enable.c
 
 x11_fullscreen.o: x11_fullscreen.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_fullscreen.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_fullscreen.c
 
 x11_glext.o: x11_glext.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_glext.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_glext.c
 
 x11_init.o: x11_init.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_init.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_init.c
 
 x11_joystick.o: x11_joystick.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_joystick.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_joystick.c
 
 x11_thread.o: x11_thread.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_thread.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_thread.c
 
 x11_time.o: x11_time.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_time.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_time.c
 
 x11_window.o: x11_window.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_window.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_window.c
 
 x11_keysym2unicode.o: x11_keysym2unicode.c ../internal.h platform.h
-	$(CC) $(CFLAGS) -o $@ x11_keysym2unicode.c
+	$(CC) -fPIC $(CFLAGS) -o $@ x11_keysym2unicode.c
 
 
 ##########################################################################
