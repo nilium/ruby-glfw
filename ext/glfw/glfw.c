@@ -144,7 +144,7 @@ static VALUE glfw_SetWindowTitle(obj,arg1)
 VALUE obj,arg1;
 {
 	Check_Type(arg1,T_STRING);
-	glfwSetWindowTitle(RSTRING(arg1)->ptr);
+	glfwSetWindowTitle(RSTRING_PTR(arg1));
 	return Qnil;
 }
 
@@ -623,7 +623,7 @@ VALUE obj,arg1,arg2;
 
 	Check_Type(arg1,T_STRING);
 	img = ALLOC(GLFWimage);
-	ret = glfwReadImage(RSTRING(arg1)->ptr,img,NUM2INT(arg2));
+	ret = glfwReadImage(RSTRING_PTR(arg1),img,NUM2INT(arg2));
 	if (ret==GL_FALSE) {
 		xfree(img);
 		return Qnil;
@@ -645,7 +645,7 @@ VALUE obj,arg1,arg2;
 
 	Check_Type(arg1,T_STRING);
 	img = ALLOC(GLFWimage);
-	ret = glfwReadMemoryImage(RSTRING(arg1)->ptr,RSTRING(arg1)->len,img,NUM2INT(arg2));
+	ret = glfwReadMemoryImage(RSTRING_PTR(arg1),RSTRING_LEN(arg1),img,NUM2INT(arg2));
 	if (ret==GL_FALSE) {
 		xfree(img);
 		return Qnil;
@@ -678,7 +678,7 @@ VALUE obj,arg1,arg2;
 {
 	int ret;
 	Check_Type(arg1,T_STRING);
-	ret = glfwLoadTexture2D(RSTRING(arg1)->ptr,NUM2INT(arg2));
+	ret = glfwLoadTexture2D(RSTRING_PTR(arg1),NUM2INT(arg2));
 	return GL_BOOL_TO_RUBY_BOOL(ret);
 }
 
@@ -693,7 +693,7 @@ VALUE obj,arg1,arg2;
 {
 	int ret;
 	Check_Type(arg1,T_STRING);
-	ret = glfwLoadMemoryTexture2D(RSTRING(arg1)->ptr,RSTRING(arg1)->len,NUM2INT(arg2));
+	ret = glfwLoadMemoryTexture2D(RSTRING_PTR(arg1),RSTRING_LEN(arg1),NUM2INT(arg2));
 	return GL_BOOL_TO_RUBY_BOOL(ret);
 }
 
@@ -725,7 +725,7 @@ static VALUE glfw_ExtensionSupported(VALUE obj,VALUE arg1)
 {
 	int ret;
 	Check_Type(arg1,T_STRING);
-	ret = glfwExtensionSupported(RSTRING(arg1)->ptr);
+	ret = glfwExtensionSupported(RSTRING_PTR(arg1));
 	return GL_BOOL_TO_RUBY_BOOL(ret);
 }
 
