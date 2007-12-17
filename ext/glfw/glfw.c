@@ -99,7 +99,7 @@ static VALUE glfw_OpenWindow(obj,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
 VALUE obj,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
 {
 	int ret;
-	
+
 	ret = glfwOpenWindow(NUM2INT(arg1),NUM2INT(arg2),NUM2INT(arg3),NUM2INT(arg4),NUM2INT(arg5),
 											 NUM2INT(arg6),NUM2INT(arg7),NUM2INT(arg8),NUM2INT(arg9));
 	return GL_BOOL_TO_RUBY_BOOL(ret);
@@ -1090,5 +1090,5 @@ DLLEXPORT void Init_glfw()
 	rb_define_const(module, "GLFW_INFINITY", INT2NUM(GLFW_INFINITY));
 
 	/* calls Glfw.glfwTerminate() at ruby exit */
-	rb_eval_string("at_exit do Glfw.glfwTerminate end");
+	rb_set_end_proc((void *)glfw_Terminate,Qnil);
 }

@@ -39,6 +39,7 @@
 
 require 'opengl'
 require 'glfw'
+require 'mathn'
 include Gl,Glu,Glfw,Math
 
 # Desired fullscreen resolution
@@ -448,13 +449,13 @@ $fountain_normal = [
 #========================================================================
 
 def DrawFountain
-	@@fountain_list ||= 0  # static variable
+	$fountain_list ||= 0  # static variable
 	
 	# The first time, we build the fountain display list
-	if( @@fountain_list == 0)
+	if( $fountain_list == 0)
 		# Start recording of a new display list
-		@@fountain_list = glGenLists( 1 )
-		glNewList( @@fountain_list, GL_COMPILE_AND_EXECUTE )
+		$fountain_list = glGenLists( 1 )
+		glNewList( $fountain_list, GL_COMPILE_AND_EXECUTE )
 		
 		# Set fountain material
 		glMaterialfv( GL_FRONT, GL_DIFFUSE,   $fountain_diffuse )
@@ -490,7 +491,7 @@ def DrawFountain
 		glEndList()
 	else
 		# Playback display list
-		glCallList( @@fountain_list )
+		glCallList( $fountain_list )
 	end
 end
 
@@ -536,7 +537,7 @@ end
 #========================================================================
 
 def DrawFloor
-	@@floor_list ||= 0
+	$floor_list ||= 0
 	
 	# Select floor texture
 	if( !$wireframe )
@@ -545,10 +546,10 @@ def DrawFloor
 	end
 	
 	# The first time, we build the floor display list
-	if( @@floor_list == 0)
+	if( $floor_list == 0)
 		# Start recording of a new display list
-		@@floor_list = glGenLists( 1 )
-		glNewList( @@floor_list, GL_COMPILE_AND_EXECUTE )
+		$floor_list = glGenLists( 1 )
+		glNewList( $floor_list, GL_COMPILE_AND_EXECUTE )
 		
 		# Set floor material
 		glMaterialfv( GL_FRONT, GL_DIFFUSE, $floor_diffuse )
@@ -569,7 +570,7 @@ def DrawFloor
 		glEndList()
 	else
 		# Playback display list
-		glCallList( @@floor_list )
+		glCallList( $floor_list )
 	end
 	
 	glDisable( GL_TEXTURE_2D )
@@ -616,11 +617,11 @@ end
 #========================================================================
 
 def Draw( t )
-	@@t_old ||= 0.0
+	$t_old ||= 0.0
 	
 	# Calculate frame-to-frame delta time
-	dt = (t-@@t_old)
-	@@t_old = t
+	dt = (t-$t_old)
+	$t_old = t
 	
 	# Setup viewport
 	glViewport( 0, 0, $width, $height )
