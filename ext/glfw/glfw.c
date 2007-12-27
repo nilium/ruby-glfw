@@ -140,10 +140,12 @@ GLFW_SET_CALLBACK_FUNC(WindowClose)
  *
  * Sets window title
  */
+VALUE window_title;
 static VALUE glfw_SetWindowTitle(obj,arg1)
 VALUE obj,arg1;
 {
 	Check_Type(arg1,T_STRING);
+	window_title = arg1;
 	glfwSetWindowTitle(RSTRING_PTR(arg1));
 	return Qnil;
 }
@@ -891,6 +893,8 @@ DLLEXPORT void Init_glfw()
 	rb_gc_register_address(&MouseButton_cb_ruby_func);
 	rb_gc_register_address(&MousePos_cb_ruby_func);
 	rb_gc_register_address(&MouseWheel_cb_ruby_func);
+
+	rb_global_variable(&window_title);
 
 	/* functions */
 	rb_define_module_function(module,"glfwInit", glfw_Init, 0);
