@@ -23,35 +23,62 @@ keyfun = lambda do |key,action|
 		$running = false
 	when GLFW_KEY_F1..GLFW_KEY_F25
 		puts "F#{1 + key - GLFW_KEY_F1}"
-  when GLFW_KEY_UP: puts "UP"
-  when GLFW_KEY_DOWN: puts "DOWN"
-  when GLFW_KEY_LEFT: puts "LEFT"
-  when GLFW_KEY_RIGHT: puts "RIGHT"
-  when GLFW_KEY_LSHIFT: puts "LSHIFT"
-  when GLFW_KEY_RSHIFT: puts "RSHIFT"
-  when GLFW_KEY_LCTRL: puts "LCTRL"
-  when GLFW_KEY_RCTRL: puts "RCTRL"
-  when GLFW_KEY_LALT: puts "LALT"
-  when GLFW_KEY_RALT: puts "RALT"
-  when GLFW_KEY_TAB: puts "TAB"
-  when GLFW_KEY_ENTER: puts "ENTER"
-  when GLFW_KEY_BACKSPACE: puts "BACKSPACE"
-  when GLFW_KEY_INSERT: puts "INSERT"
-  when GLFW_KEY_DEL: puts "DEL"
-  when GLFW_KEY_PAGEUP: puts "PAGEUP"
-  when GLFW_KEY_PAGEDOWN: puts "PAGEDOWN"
-  when GLFW_KEY_HOME: puts "HOME"
-  when GLFW_KEY_END: puts "END"
+  when GLFW_KEY_UP
+		puts "UP"
+  when GLFW_KEY_DOWN
+		puts "DOWN"
+  when GLFW_KEY_LEFT
+		puts "LEFT"
+  when GLFW_KEY_RIGHT
+		puts "RIGHT"
+  when GLFW_KEY_LSHIFT
+		puts "LSHIFT"
+  when GLFW_KEY_RSHIFT
+		puts "RSHIFT"
+  when GLFW_KEY_LCTRL
+		puts "LCTRL"
+  when GLFW_KEY_RCTRL
+		puts "RCTRL"
+  when GLFW_KEY_LALT
+		puts "LALT"
+  when GLFW_KEY_RALT
+		puts "RALT"
+  when GLFW_KEY_TAB
+		puts "TAB"
+  when GLFW_KEY_ENTER
+		puts "ENTER"
+  when GLFW_KEY_BACKSPACE
+		puts "BACKSPACE"
+  when GLFW_KEY_INSERT
+		puts "INSERT"
+  when GLFW_KEY_DEL
+		puts "DEL"
+  when GLFW_KEY_PAGEUP
+		puts "PAGEUP"
+  when GLFW_KEY_PAGEDOWN
+		puts "PAGEDOWN"
+  when GLFW_KEY_HOME
+		puts "HOME"
+  when GLFW_KEY_END
+		puts "END"
 	when GLFW_KEY_KP_0..GLFW_KEY_KP_9
 		puts "KEYPAD #{key - GLFW_KEY_KP_0}"
-	when GLFW_KEY_KP_DIVIDE: puts "KEYPAD DIVIDE"
-	when GLFW_KEY_KP_MULTIPLY: puts "KEYPAD MULTIPLY"
-	when GLFW_KEY_KP_SUBTRACT: puts "KEYPAD SUBTRACT"
-	when GLFW_KEY_KP_ADD: puts "KEYPAD ADD"
-	when GLFW_KEY_KP_DECIMAL: puts "KEYPAD DECIMAL"
-	when GLFW_KEY_KP_EQUAL: puts "KEYPAD ="
-	when GLFW_KEY_KP_ENTER: puts "KEYPAD ENTER"
-	when GLFW_KEY_SPACE: puts "SPACE"
+	when GLFW_KEY_KP_DIVIDE
+		puts "KEYPAD DIVIDE"
+	when GLFW_KEY_KP_MULTIPLY
+		puts "KEYPAD MULTIPLY"
+	when GLFW_KEY_KP_SUBTRACT
+		puts "KEYPAD SUBTRACT"
+	when GLFW_KEY_KP_ADD
+		puts "KEYPAD ADD"
+	when GLFW_KEY_KP_DECIMAL
+		puts "KEYPAD DECIMAL"
+	when GLFW_KEY_KP_EQUAL
+		puts "KEYPAD ="
+	when GLFW_KEY_KP_ENTER
+		puts "KEYPAD ENTER"
+	when GLFW_KEY_SPACE
+		puts "SPACE"
 	when ?R
 		if ($keyrepeat==false)
 			glfwEnable(GLFW_KEY_REPEAT)
@@ -69,10 +96,10 @@ keyfun = lambda do |key,action|
 		$systemkeys = !$systemkeys
 		puts "S => System keys: #{$systemkeys ? 'ON' : 'OFF'}"
 	else
-		if (key>0 && key<256)
-			puts key.chr
-		else
+		if (key.class == Fixnum && key>256)
 			puts "???"
+		else
+			puts key.chr
 		end
 	end
 	$stdout.flush

@@ -44,11 +44,11 @@ TORUS_MAJOR_RES = 32
 TORUS_MINOR_RES = 32
 
 def DrawTorus
-	@@torus_list ||= 0 # static(class) variable, initialize or no-op if already initialized
-	if (@@torus_list==0)
+	$torus_list ||= 0 # static(class) variable, initialize or no-op if already initialized
+	if ($torus_list==0)
 		# Start recording displaylist
-		@@torus_list = glGenLists( 1 )
-		glNewList( @@torus_list, GL_COMPILE_AND_EXECUTE )
+		$torus_list = glGenLists( 1 )
+		glNewList( $torus_list, GL_COMPILE_AND_EXECUTE )
 		
 		# Draw torus
 		twopi = 2.0 * PI;
@@ -83,7 +83,7 @@ def DrawTorus
 		glEndList()
 	else
 		# Playback displaylist
-		glCallList( @@torus_list )
+		glCallList( $torus_list )
 	end
 end
 
@@ -337,15 +337,15 @@ end
 
 MousePosFun = lambda do |x,y|
 	case $active_view
-	when 1:
+	when 1
 		$rot_x += y - $ypos
 		$rot_z += x - $xpos
 		$do_redraw = 1
-	when 3:
+	when 3
 		$rot_x += y - $ypos
 		$rot_y += x - $xpos
 		$do_redraw = 1
-	when 4:
+	when 4
 		$rot_y += x - $xpos
 		$rot_z += y - $ypos
 		$do_redraw = 1

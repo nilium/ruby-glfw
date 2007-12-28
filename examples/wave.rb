@@ -204,14 +204,22 @@ handle_key_down = lambda do |key,action|
 	end
 	
 	case key
-	when GLFW_KEY_ESC: $running = false
-	when GLFW_KEY_SPACE: initSurface()
-	when GLFW_KEY_LEFT: $alpha += 5
-	when GLFW_KEY_RIGHT: $alpha -= 5
-	when GLFW_KEY_UP: $beta -= 5
-	when GLFW_KEY_DOWN: $beta += 5
-	when GLFW_KEY_PAGEUP: $zoom -= 1 if $zoom > 1
-	when GLFW_KEY_PAGEDOWN: $zoom += 1
+	when GLFW_KEY_ESC
+		$running = false
+	when GLFW_KEY_SPACE
+		initSurface()
+	when GLFW_KEY_LEFT
+		$alpha += 5
+	when GLFW_KEY_RIGHT
+		$alpha -= 5
+	when GLFW_KEY_UP
+		$beta -= 5
+	when GLFW_KEY_DOWN
+		$beta += 5
+	when GLFW_KEY_PAGEUP
+		$zoom -= 1 if $zoom > 1
+	when GLFW_KEY_PAGEDOWN
+		$zoom += 1
 	end
 end
 

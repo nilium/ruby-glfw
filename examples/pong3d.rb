@@ -491,19 +491,19 @@ def UpdateDisplay
 	glMatrixMode( GL_MODELVIEW )
 	glLoadIdentity()
 	case ( $camerapos )
-	when CAMERA_ABOVE:
+	when CAMERA_ABOVE
 		gluLookAt(
 			0.0, 0.0, 2.5,
 			$ball.xpos, $ball.ypos, 0.0,
 			0.0, 1.0, 0.0
 		)
-	when CAMERA_SPECTATOR:
+	when CAMERA_SPECTATOR
 		gluLookAt(
 			0.0, -2.0, 1.2,
 			$ball.xpos, $ball.ypos, 0.0,
 			0.0, 0.0, 1.0
 		)
-	when CAMERA_CLASSIC:
+	when CAMERA_CLASSIC
 		gluLookAt(
 			0.0, 0.0, 2.5,
 			0.0, 0.0, 0.0,
@@ -670,10 +670,10 @@ def GameLoop
 		
 		# Did we have a winner?
 		case ( event )
-		when PLAYER1_WINS:
+		when PLAYER1_WINS
 			$winner = PLAYER1
 			playing = false
-		when PLAYER2_WINS:
+		when PLAYER2_WINS
 			$winner = PLAYER2
 			playing = false
 		else

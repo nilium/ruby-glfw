@@ -48,23 +48,25 @@ def parse_libglfwpcin(path)
 	[cflags,libs]	
 end
 
+RUBYVER = " -DRUBY_VERSION=" + RUBY_VERSION.split(".").join
+
 Mkrf::Generator.new( 'glfw' ) do |g|
 	case RUBY_PLATFORM
 	when /darwin/
 		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/macosx/libglfw.pc.in")
 		g.objects << $glfw_dir_lib + "/macosx/libglfw.a"
-		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf
+		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf << RUBYVER
 		g.ldshared << ' -L' + $glfw_dir_lib + '/macosx/ ' + lib
 	when /mswin32/	
 		g.objects << $glfw_dir_lib + "/win32/glfw.lib"
-		g.cflags << ' -DWIN32 -I' + $glfw_dir_inc + ' '
+		g.cflags << ' -DWIN32 -I' + $glfw_dir_inc + ' ' << RUBYVER
 		g.ldshared << ' /NODEFAULTLIB:LIBC '
 		g.include_library( 'glu32.lib', '')
 		g.include_library( 'opengl32.lib', '')
 	else # general posix-x11
 		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/x11/libglfw.pc.in")
 		g.objects << $glfw_dir_lib + "/x11/libglfw.a"
-		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf
+		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf << RUBYVER
 		g.ldshared << ' -L' + $glfw_dir_lib + '/x11/ ' + lib
 	end
 end

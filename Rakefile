@@ -115,6 +115,6 @@ end
 
 # Create a task for creating a ruby gem
 Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.gem_spec = spec
-    pkg.need_tar = true
+	pkg.gem_spec = spec
+	pkg.need_tar = true
 end

@@ -349,7 +349,10 @@ static VALUE glfw_WaitEvents(VALUE obj)
 static VALUE glfw_GetKey(VALUE obj,VALUE arg1)
 {
 	int ret;
-	ret = glfwGetKey(NUM2INT(arg1));
+	if (TYPE(arg1)==T_STRING)
+		ret = glfwGetKey(RSTRING_PTR(arg1)[0]);
+	else
+		ret = glfwGetKey(NUM2INT(arg1));
 	return INT2NUM(ret);
 }
 
@@ -476,7 +479,15 @@ static VALUE glfw_GetJoystickButtons(VALUE obj,VALUE arg1)
 static VALUE Key_cb_ruby_func = Qnil;
 void GLFWCALL Key_cb(int key, int action)
 {
+#if RUBY_VERSION <190
 	rb_funcall(Key_cb_ruby_func,call_id,2,INT2NUM(key),INT2NUM(action));
+#else
+	if (key>=0 && key<256) {
+		rb_funcall(Key_cb_ruby_func,call_id,2,rb_funcall(INT2NUM(key),rb_intern("chr"),0),INT2NUM(action));
+	} else {
+		rb_funcall(Key_cb_ruby_func,call_id,2,INT2NUM(key),INT2NUM(action));
+	}
+#endif
 }
 GLFW_SET_CALLBACK_FUNC(Key)
 
@@ -955,13 +966,16 @@ DLLEXPORT void Init_glfw()
 	rb_define_module_function(module,"glfwGetNumberOfProcessors", glfw_GetNumberOfProcessors, 0);
 
 	/* constants */
+
+	/* for compatibility between ruby versuins - 1.8 => 32	, 1.9 => " " */
+	rb_define_const(module, "GLFW_KEY_SPACE",  rb_eval_string("?\\s"));
+
 	rb_define_const(module, "GLFW_VERSION_MAJOR", INT2NUM(GLFW_VERSION_MAJOR));
 	rb_define_const(module, "GLFW_VERSION_MINOR", INT2NUM(GLFW_VERSION_MINOR));
 	rb_define_const(module, "GLFW_VERSION_REVISION", INT2NUM(GLFW_VERSION_REVISION));
 	rb_define_const(module, "GLFW_RELEASE", INT2NUM(GLFW_RELEASE));
 	rb_define_const(module, "GLFW_PRESS", INT2NUM(GLFW_PRESS));
 	rb_define_const(module, "GLFW_KEY_UNKNOWN", INT2NUM(GLFW_KEY_UNKNOWN));
-	rb_define_const(module, "GLFW_KEY_SPACE", INT2NUM(GLFW_KEY_SPACE));
 	rb_define_const(module, "GLFW_KEY_SPECIAL", INT2NUM(GLFW_KEY_SPECIAL));
 	rb_define_const(module, "GLFW_KEY_ESC", INT2NUM(GLFW_KEY_ESC));
 	rb_define_const(module, "GLFW_KEY_F1", INT2NUM(GLFW_KEY_F1));
