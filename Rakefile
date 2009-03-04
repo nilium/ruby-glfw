@@ -1,4 +1,4 @@
-# Copyright (C) 2007 Jan Dvorak <jan.dvorak@kraxnet.cz>
+# Copyright (C) 2009 Jan Dvorak <jan.dvorak@kraxnet.cz>
 #
 # This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
@@ -100,21 +100,49 @@ spec = Gem::Specification.new do |s|
 	s.author            = "Jan Dvorak"
 	s.email             = "jan.dvorak@kraxnet.cz"
 	s.homepage          = "http://ruby-glfw.rubyforge.org"
-	s.platform          = Gem::Platform::RUBY
 	s.summary           = "GLFW library bindings for Ruby"
 	s.rubyforge_project = "ruby-glfw"
-	s.files             = gem_files
-	s.extensions        << 'Rakefile'
 	s.require_path      = "lib"
 	s.has_rdoc          = true
 	s.rdoc_options 			<< '--main' << rd.main << '--title' << rd.title
   s.extra_rdoc_files = rd.rdoc_files
-	s.add_dependency("mkrf", ">=0.2.0")
-	s.add_dependency("rake")
+end
+
+
+desc "builds binary gem on any platform"
+task :binary_gem => [:default,:rdoc] do
+
+  binary_gem_files = FileList["{lib,examples,html}/**/*"] + ["README","README.API"]
+  binary_spec = spec.dup
+  binary_spec.files = binary_gem_files
+  binary_spec.platform = Config::CONFIG['arch']
+  
+  gem_fname_ext = ".gem"
+  if (RUBY_VERSION.split(".").join < "190")
+    binary_spec.required_ruby_version = '~> 1.8.0'
+  else
+    binary_spec.required_ruby_version = '>= 1.9.0'
+    gem_fname_ext = "-ruby19.gem"
+  end
+  
+  Gem::Builder.new( binary_spec ).build
+  
+  Dir.mkdir("pkg") rescue {}
+  unless (fname = Dir["ruby-glfw*.gem"]).empty?
+    fname = fname.first
+    newfname = fname[0..-5] + gem_fname_ext
+    mv fname, "pkg/#{newfname}"
+  end
 end
 
 # Create a task for creating a ruby gem
 Rake::GemPackageTask.new(spec) do |pkg|
+	spec.files             = gem_files
+	spec.platform = Gem::Platform::RUBY
+	spec.add_dependency("mkrf", ">=0.2.0")
+	spec.add_dependency("rake")
+	spec.extensions        << 'Rakefile'
+  
 	pkg.gem_spec = spec
 	pkg.need_tar = true
 end
