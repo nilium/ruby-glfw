@@ -53,10 +53,10 @@ RUBYVER = " -DRUBY_VERSION=" + RUBY_VERSION.split(".").join
 Mkrf::Generator.new( 'glfw' ) do |g|
 	case RUBY_PLATFORM
 	when /darwin/
-		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/macosx/libglfw.pc.in")
-		g.objects << $glfw_dir_lib + "/macosx/libglfw.a"
+		cf,lib = parse_libglfwpcin($glfw_dir_lib + "/cocoa/libglfw.pc.in")
+		g.objects << $glfw_dir_lib + "/cocoa/libglfw.a"
 		g.cflags << ' -Wall -I' + $glfw_dir_inc + ' ' + cf << RUBYVER
-		g.ldshared << ' -L' + $glfw_dir_lib + '/macosx/ ' + lib
+		g.ldshared << ' -L' + $glfw_dir_lib + '/cocoa/ ' + lib
 	when /mswin32/	
 		g.objects << $glfw_dir_lib + "/win32/glfw.lib"
 		g.cflags << ' -DWIN32 -I' + $glfw_dir_inc + ' ' << RUBYVER

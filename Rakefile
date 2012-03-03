@@ -37,8 +37,8 @@ when /(:?mswin|mingw)/ # windows, MSVC 6
 	lib_build = "nmake.exe win32-msvc"
 	lib_clean = "nmake.exe win32-clean"
 when /darwin/ # mac
-	lib_build = "make macosx-gcc"
-	lib_clean = "make macosx-clean"
+	lib_build = "make cocoa"
+	lib_clean = "make cocoa-clean"
 else # general posix-x11
 	lib_build = "make x11"
 	lib_clean = "make x11-clean"
