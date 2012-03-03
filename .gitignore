@@ -5,6 +5,10 @@
 *.dylib
 *.app
 *.a
-glfw-src/examples
-glfw-src/support
 pkg
+glfw-src/examples/listmodes
+glfw-src/examples/mtbench
+glfw-src/examples/mthello
+glfw-src/tests/defaults
+glfw-src/tests/joysticks
+glfw-src/tests/version
