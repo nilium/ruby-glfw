@@ -219,11 +219,11 @@ key = lambda do |k,action|
     else
       $view_rotz += 5.0;
     end
-	when GLFW_KEY_ESC: $running = false
-	when GLFW_KEY_UP: $view_rotx += 5.0
-	when GLFW_KEY_DOWN: $view_rotx -= 5.0
-  when GLFW_KEY_LEFT: $view_roty += 5.0
-  when GLFW_KEY_RIGHT: $view_roty -= 5.0
+	when GLFW_KEY_ESC; $running = false
+	when GLFW_KEY_UP; $view_rotx += 5.0
+	when GLFW_KEY_DOWN; $view_rotx -= 5.0
+  when GLFW_KEY_LEFT; $view_roty += 5.0
+  when GLFW_KEY_RIGHT; $view_roty -= 5.0
 	end
 end
 

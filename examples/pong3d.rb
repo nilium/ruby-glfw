@@ -716,7 +716,7 @@ menuoption = MENU_NONE
 # Initialize GLFW
 
 # Open OpenGL window
-if( glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 16,0, GLFW_FULLSCREEN ) == false )
+if( glfwOpenWindow( WIDTH, HEIGHT, 0,0,0,0, 16,0, GLFW_WINDOW ) == false )
 	exit
 end
 
