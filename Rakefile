@@ -42,8 +42,8 @@ setup_extension('glfw', 'glfw')
 
 # setup building and cleaning the bundled GLFW library
 case RUBY_PLATFORM
-when /(:?mswin|mingw)/ # windows, MSVC 6
-  lib_build = "nmake.exe win32-msvc"
+when /(:?mswin|mingw)/ # windows, mingw
+  lib_build = "nmake.exe win32-mingw"
   lib_clean = "nmake.exe win32-clean"
 when /darwin/ # mac
   lib_build = "make cocoa"
@@ -105,8 +105,16 @@ end
 gem_files = FileList["{lib,ext,examples,glfw-src,website}/**/*","README.md"]
 gem_files = gem_files.exclude("**/*.so",
                               "**/*.o{,bj}",
+                              "examples/**/*",
                               "ext/glfw/*.log",
-                              "ext/glfw/Rakefile")
+                              "ext/glfw/Rakefile",
+                              "glfw-src/docs/**/*",
+                              "glfw-src/support/**/*",
+                              "**/*.app/**/*",
+                              "**/*.dSYM/**/*",
+                              "**/*.dSYM",
+                              "**/*.app",
+                              "**/*.dylib")
 
 spec = Gem::Specification.new do |s|
   s.name              = "ruby-glfw"
