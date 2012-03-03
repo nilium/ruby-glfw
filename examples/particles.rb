@@ -349,7 +349,7 @@ def DrawParticles(t,dt)
 		glPointParameterf( GL_POINT_SIZE_MIN, 1.0 )
 		glPointParameterf( GL_POINT_SIZE_MAX, 1024.0 )
 	
-		glTexEnvf( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE )
+		glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, 1 )
 	
 	
 		glEnable( GL_POINT_SPRITE)
@@ -750,7 +750,7 @@ ARGV.each do |arg|
 end
 
 # Open OpenGL fullscreen window
-if( glfwOpenWindow( WIDTH, HEIGHT, 5,6,5,0, 16,0, GLFW_FULLSCREEN ) == false)
+if( glfwOpenWindow( WIDTH, HEIGHT, 5,6,5,0, 16,0, GLFW_WINDOW ) == false)
 	exit
 end
 
