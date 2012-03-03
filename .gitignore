@@ -1,0 +1,10 @@
+.DS_Store
+*.o
+*.bundle
+*.dSYM
+*.dylib
+*.app
+*.a
+glfw-src/examples
+glfw-src/support
+pkg
